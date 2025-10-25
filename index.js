@@ -11,4 +11,4 @@ export {
     ValidateMany,
     ClassicModel,
     CustomClassicModel
-} from './lex-validation.js';
+} from './lex-validation.js'
