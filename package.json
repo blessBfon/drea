@@ -1,0 +1,14 @@
+{
+  "name": "lex-validation",
+  "version": "1.0.0",
+  "description": "A schema-based and functional validation library for JavaScript.",
+  "main": "index.js",
+  "type": "module",
+  "keywords": ["validation", "schema", "javascript", "forms", "normalizer"],
+  "license": "MIT",
+  "author": "Fon bless",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blessBfon/lex-validation.git"
+}
+}
