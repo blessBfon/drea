@@ -7,6 +7,8 @@ export {
     isPasswordValid,
     isRequired,
     validateEntry,
-    normalizer,
-    ValidateMany
+    Normalizer,
+    ValidateMany,
+    ClassicModel,
+    CustomClassicModel
 } from './lex-validation.js';
