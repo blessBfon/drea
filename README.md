@@ -1,4 +1,4 @@
-# lex-validation[Uploading lex_validation_docs.md…]()# 📘 Lex Validation – Beginner-Friendly Documentation
+# 📘 Lex Validation – Beginner-Friendly Documentation
 
 Lex Validation is a lightweight and flexible JavaScript validation library designed to simplify data validation using **rules, schemas, and models**.  
 It allows you to validate single entries, multiple entries, and even create reusable validation models with customizable rules.
