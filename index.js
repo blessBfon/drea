@@ -8,7 +8,7 @@ export {
     isRequired,
     validateEntry,
     Normalizer,
-    ValidateMany,
+     ValidateMany,
     ClassicModel,
     CustomClassicModel
 } from './drea.js'
