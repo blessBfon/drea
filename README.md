@@ -1,6 +1,6 @@
-# Lex Validation – Beginner-Friendly Documentation
+# drea – Beginner-Friendly Documentation
 
-**Lex Validation** is a lightweight JavaScript validation library for validating single values, multiple entries, and schema-based data using **predefined rules** or **custom models**. It works both in browsers and Node.js.
+**drea** is a lightweight JavaScript validation library for validating single values, multiple entries, and schema-based data using **predefined rules** or **custom models**. It works both in browsers and Node.js.
 
 ---
 
@@ -30,7 +30,7 @@ import {
   isPhoneNumberValid,
   isPasswordValid,
   isRequired
-} from "./Lex.js";
+} from "./drea.js";
 ```
 
 ---
