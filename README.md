@@ -20,7 +20,7 @@ It allows you to validate single entries, multiple entries, and even create reus
 
 ```js
 import {
-  normalizer,
+  Normalizer,
   validateMany,
   validateEntry,
   ClassicModel,
