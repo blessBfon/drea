@@ -7,7 +7,7 @@
  */
 
 /*
- * Lex Validation Library
+ * drea Validation Library
  * Author: Fon Bless Mtoh
  * Version: 1.0.0
  * Description: Lightweight schema-based validation and normalization system for JavaScript and web applications.

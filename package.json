@@ -1,14 +1,27 @@
 {
-  "name": "lex-validation",
+  "name": "drea",
   "version": "1.0.0",
   "description": "A schema-based and functional validation library for JavaScript.",
-  "main": "index.js",
-  "type": "module",
-  "keywords": ["validation", "schema", "javascript", "forms", "normalizer"],
-  "license": "MIT",
-  "author": "Fon Bless",
+  "keywords": [
+    "validation",
+    "schema",
+    "javascript",
+    "forms",
+    "normalizer"
+  ],
+  "homepage": "https://github.com/blessBfon/drea#readme",
+  "bugs": {
+    "url": "https://github.com/blessBfon/drea/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blessBfon/lex-validation.git"
-}
+    "url": "git+https://github.com/blessBfon/drea.git"
+  },
+  "license": "MIT",
+  "author": "Fon bless",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
