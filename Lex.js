@@ -22,22 +22,19 @@ const validateEntry= ({
                     }) =>{
 
     try{
-   
-          //we can throw("Entry cannot be null")
-    
+ 
     if(entry == null || entry == undefined){ //prevent unexpected errors
+        //null === undefined in JS
                 return{
                     status:false,
                     error:"Entry cannot be null"
                         }
     }
 
-        //Now entry is not null nor undefined 
-    
         if (typeof entry === 'string'){
             entry = entry.trim() //trim spaces
         }
-        // for every object
+       
     for (const {rule,errorMsg} of RuleAndError) {
         let isInputValid = false
 
@@ -211,9 +208,6 @@ try{
 } 
 
 
-const trim = (value) =>{
-       return   typeof value === 'string' ?  value.trim() : value
-         }
 
 
 class Normalizer {
@@ -243,10 +237,9 @@ class Normalizer {
 
 
 
-//Classic data model similar to pydantic but this is built-in
+//Classic data model
 class ClassicModel{
-    //take any object comprising of one or more of any --> (username,password,email,phonenumber) 
-    //returns a model one 
+    
 
     //restrictions
     restr = {
@@ -281,19 +274,23 @@ class ClassicModel{
             phonenumber:''
         }
 
-        ok = {}//succes obj
-        error = {}//error obj
+        ok = {}
+        error = {}
 
-        //constructor
+      
         constructor(obj){
             
-          //make sure that if there's a key (a field) that does not exist
-          //from the object sent by the user then (that is an undefined key ) the key should
-          //be null and it will ejected (from the this.obj) later when validation is done
+         
             this.obj.username = obj.username ? obj.username : null
             this.obj.email = obj.email ? obj.email : null
             this.obj.password = obj.password ? obj.password : null
             this.obj.phonenumber = obj.phonenumber ? obj.phonenumber :null 
+
+                    /*
+                 for (const key of Object.keys(this.obj)) {
+                            this.obj[key] = obj[key] ?? null;
+                            }
+                        */
          
        
         }
@@ -302,8 +299,6 @@ class ClassicModel{
             try{
               
           for (const [key,value] of Object.entries(this.obj)){ 
-            //OR for(const [ key,value] of Object.entries(this.obj))
-            
          
             if(this.obj[key] != null){//if the field is not null
                 
@@ -330,14 +325,14 @@ class ClassicModel{
             
                 
           }
-          //if the field is null
-          else{
+          
+          else{//if the field is null
         
               //deleting the null field
                 delete this.obj[key]
           }
            
-        }
+    }
 
         //now we can return the model data  or this.error object contains any error
         if(Object.keys(this.error).length > 0 ){//
@@ -369,9 +364,9 @@ class CustomClassicModel{
         ok  = {}
     constructor(schema_restr_model){
         
-        if(typeof schema_restr_model === "object"){
+        if(typeof schema_restr_model === "object")
+        {
         this.schema_restr_model = schema_restr_model
-       
         }
         else{
             throw ({
@@ -412,7 +407,8 @@ class CustomClassicModel{
 
                 })
 
-                if(!status){//if error is not null 
+                if(!status){
+                    //if status is false
                 this.error[key] = {
                     status:status,
                     error:error,
@@ -420,7 +416,8 @@ class CustomClassicModel{
                 }
         }}
 
-        if(Object.keys(this.error).length>0)//number of keys in error is > 1
+        if(Object.keys(this.error).length>0)
+            //number of keys in error is > 1
             return this.error
         
         //else
@@ -439,6 +436,7 @@ class CustomClassicModel{
     extend(ext_restr){
         try{
         for (const [key,value] of Object.entries(ext_restr)){
+
             //prevent duplicate keys
             const all_restr_keys = Object.keys(this.schema_restr_model)//returns an array of restr keys
             if(!(all_restr_keys.includes(key)))//find if any key in ext_restr does not exists inn restr
@@ -447,7 +445,10 @@ class CustomClassicModel{
 
                 }
             else{
-                throw ({ code: 442, error: `Duplicate key '${key}' already exists in schema` });
+                throw ({ 
+                        code: 442, 
+                        error: `Duplicate key '${key}' already exists in schema`
+                     });
             }
         }
     }
@@ -471,19 +472,6 @@ class CustomClassicModel{
 
 
 
-//strict checking
-
-//1 .for emails
-//get all possible domains
-//all possible tld 
-
-//2. password
-//no repeated case letters in a row
-
-//3. phonenumber
-//use libphonenumber.js to check if number exist or is valid (code + number)
-
-
 
 
 
@@ -498,5 +486,4 @@ export  {
     validateMany,
     ClassicModel,
     CustomClassicModel
-    // validateAll
 };
