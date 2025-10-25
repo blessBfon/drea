@@ -1,4 +1,4 @@
-# drea – Beginner-Friendly Documentation
+# drea –Beginner-Friendly Documentation
 
 **drea** is a lightweight JavaScript validation library for validating single values, multiple entries, and schema-based data using **predefined rules** or **custom models**. It works both in browsers and Node.js.
 
