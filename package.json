@@ -6,7 +6,7 @@
   "type": "module",
   "keywords": ["validation", "schema", "javascript", "forms", "normalizer"],
   "license": "MIT",
-  "author": "Fon bless",
+  "author": "Fon Bless",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blessBfon/lex-validation.git"
