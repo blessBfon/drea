@@ -3,7 +3,7 @@ import {normalizer,
     validateMany,
     validateEntry,
     ClassicModel,
-CustomClassicModel} from './drea.js'
+    CustomClassicModel} from './drea.js'
 
 //Passing a regex as the rule
 console.log(validateEntry({
