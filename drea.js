@@ -47,26 +47,6 @@ const StrictEmail = (v) =>
     } 
    
 
-/**
- * Validates URI 
- * 
- * @param {string} uri - The URI to be validated
- * @returns {boolean} Returns true if URI Iis valid
- */
-const URI = (uri)=>{
-    return true
-}
-
-/**
- * Validates URL 
- * 
- * @param {string} url - The URL to be validated
- * @returns {boolean} Returns true if URL Iis valid
- */
-const URL = (url)=>{
-    return true
-}
-
 
 /** 
  * Validates a single entry against the provided rule
