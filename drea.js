@@ -6,6 +6,8 @@
  * @returns {{ status: boolean, error: string|null }}
  */
 
+
+
 /*
  * drea Validation Library
  * Author: Fon Bless Mtoh
@@ -14,22 +16,88 @@
  * License: MIT
  */
 
-//Custom validation
 
+
+
+//VERSION 1.1.8
+
+/**
+ * Special value representing "no-validation"
+ * 
+ * Use only as a rule in validation. This ensures validation  for that entry is skipped (hence true).
+ * None is an immutable object and it carries a clear internal marker 
+ */
+const None = Object.defineProperty(globalThis,"None",{
+    value:Object.freeze({__type:"None"}),
+    writable:false,
+    configurable:false,
+    enumerable:true
+})
+
+
+/**
+ * 
+ * @param {*} v - The email addr to test
+ * @returns {boolean} Returns true if email matches the regex
+ */
+const StrictEmail = (v) =>
+    {
+        const reg_ = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,63})+$/
+        return reg_.test(v.trim)
+    } 
+   
+
+/**
+ * Validates URI 
+ * 
+ * @param {string} uri - The URI to be validated
+ * @returns {boolean} Returns true if URI Iis valid
+ */
+const URI = (uri)=>{
+    return true
+}
+
+/**
+ * Validates URL 
+ * 
+ * @param {string} url - The URL to be validated
+ * @returns {boolean} Returns true if URL Iis valid
+ */
+const URL = (url)=>{
+    return true
+}
+
+
+/** 
+ * Validates a single entry against the provided rule
+ * @param {Object} { entry, RuleAndError = [ ] } 
+ * @returns Returns an object { status, error }
+ */
+//Custom validation
 const validateEntry= ({
                        entry,
                        RuleAndError=[]
                     }) =>{
 
+  
+
     try{
  
     if(entry == null || entry == undefined){ //prevent unexpected errors
         //null === undefined in JS
-                return{
-                    status:false,
-                    error:"Entry cannot be null"
+                return  {
+                        status:false,
+                        error:"Entry cannot be null"
                         }
     }
+    //prevent illegal  use of None
+    if (entry.__type === "None"){
+        throw ({
+            code:447,
+            error:"entry cannot be of None type."
+        })
+    }
+  
 
         if (typeof entry === 'string'){
             entry = entry.trim() //trim spaces
@@ -37,6 +105,16 @@ const validateEntry= ({
        
     for (const {rule,errorMsg} of RuleAndError) {
         let isInputValid = false
+
+        //prevent illegal use of nonetype
+        if(errorMsg.__type ==="None"){
+            
+            throw ({
+            code:446,
+            error:"errorMsg cannot be of None type."
+        })
+            
+        }
 
         //if rule is a regexp
         if (rule instanceof RegExp){
@@ -46,6 +124,12 @@ const validateEntry= ({
         //if rule is function
         else if (typeof rule === 'function'){
             isInputValid = rule(entry)
+        }
+        //{Update::>04/11/25}
+        //if rule is None this means no validation will be done on that entry
+        else if(rule.__type==='None'){
+            isInputValid = true
+            
         }
 
         //if rule neither a function or a regexp
@@ -79,7 +163,11 @@ const validateEntry= ({
 
 //Builtin functions
 
-//isUsernameValid
+/**
+ * Checks if the entry matches the built-in username regex
+ * @param {string} entry username to be validated
+ * @returns {boolean} Returns true if username matches the built-in regex
+ */
 const isUsernameValid = (entry)=>{
      const RuleAndError = [
                  {
@@ -101,11 +189,18 @@ const isUsernameValid = (entry)=>{
                 })
 }
 
+
 //isEmailValid
+/**
+ * Checks if the entry matches the built-in email regex
+ * @param {string} entry email to be validated
+ * @returns {boolean} Returns true if email matches the built-in email regex
+ */
 const  isEmailValid= (entry) =>{
         const RuleAndError=[
             {
-                rule:/^(?!\.)[A-Za-z0-9._%+-]{1,64}(?<!\.)@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ 
+                //v1.0.7 /^(?!\.)[A-Za-z0-9._%+-]{1,64}(?<!\.)@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ 
+                rule:StrictEmail
         ,
                 errorMsg:"Invalid Email address"
             }
@@ -120,7 +215,11 @@ const  isEmailValid= (entry) =>{
 
 
 //isPhonenumberValid
-
+/**
+ * Checks if entry matches the built-in phonenumber regex
+ * @param {string} entry phonenumber to be validated
+ * @returns Returns true if phonenumber matches the built-in phonenumber regex
+ */
 const isPhoneNumberValid = (entry) =>{
            const  RuleAndError=[
                 
@@ -145,6 +244,11 @@ const isPhoneNumberValid = (entry) =>{
         }
 
 
+/**
+ * Checks if the entry matches the built-in password regex
+ * @param {string} entry password to be validated
+ * @returns Returns true if password matches the built-in password regex
+ */
 const isPasswordValid = (entry) =>{
        const  RuleAndError=[
             {
@@ -172,6 +276,12 @@ const isPasswordValid = (entry) =>{
 
     }
 
+
+/**
+ * Ensures the entry is not null
+ * @param {string} entry Required entry
+ * @returns Returns true if entry is not null
+ */
 const  isRequired = (entry)=>{
        const  RuleAndError = [
             {
@@ -186,6 +296,15 @@ const  isRequired = (entry)=>{
     }
 
 
+
+/**
+ * Validates multiple entry at once
+ * @param {array} schema takes an array of objects where each object is of the form 
+ * { entry, 
+ * RuleAndError = [ ] 
+ * }
+ * @returns Returns an empty array [ ] if no entry was invalid
+ */
  const validateMany = (schema=[]) =>{
     const InvalidArray = []
 try{
@@ -209,11 +328,16 @@ try{
 
 
 
-
+/**
+ * @typedef {Object} Normalizer normalizes data
+ * 
+ * @property {string|number} value value to be normalize
+ */
 class Normalizer {
     constructor(){
 //empty
     }
+   
     static trim (value){
        return   typeof value === 'string' ?  value.trim() : value
          }
@@ -237,6 +361,23 @@ class Normalizer {
 
 
 
+/**
+ * 
+ * @typedef {Object} ClassicModel Schema-Based Validation. ClassicModel takes an object that might
+ * have any combination of username, email, password, phonenumber as keys
+ * 
+ ```js
+ Example
+const cl = new ClassicModel({
+  email: "blessfonmtoh@gmail.com",
+  password: "Bless01G$",
+  username: "Fon Bless",
+  phonenumber: "23765373165"
+});
+console.log(cl.validate());
+```
+ * 
+ */
 //Classic data model
 class ClassicModel{
     
@@ -295,6 +436,10 @@ class ClassicModel{
        
         }
 
+   /**
+ * Validates the data against the schema restriction model
+ * @returns {object} Returns an object
+ */
         validate(){
             try{
               
@@ -354,11 +499,31 @@ class ClassicModel{
 }
 
 //creating your own model
+/**
+ * 
+ * @typedef {Object} CustomClassicModel Creating your own schema validation rule
+ * ```js
+            const schema = {
+            name: { rule: (v) => typeof v === "string", errorMsg: "Name must be a string" },
+            age: { rule: (v) => typeof v === "number", errorMsg: "Age must be a number" }
+            };
+            const custom = new CustomClassicModel(schema);
+            console.log(custom.validate({ name: "Bless", age: 20 }));
+```
+*It needs your own restr obj which will model the data and validate it.
+
+*These keys will reflect the keys of your data and can be extended.
+
+*This model will be based on schema restrictions provided so it expects data to based on it.
+
+* **Note**: Keys of the data should exist in the schema restriction model.
+ * 
+ */
 class CustomClassicModel{
     //we need your own restr obj which will model the data and validate it
     //the keys will reflect the keys of your data simply and you can even extend yours
     //This model will be based on schema restrictions provided so we expect data to based on it
-    //that's keys of the data should exist in the schema restriction
+    //That is keys of the data should exist in the schema restriction model
        
         error = {}
         ok  = {}
@@ -376,6 +541,12 @@ class CustomClassicModel{
         }
     }
 
+
+/**
+ * Validates the data against the schema restriction model
+ * @param {object} obj data to be structured by the schema restriction model
+ * @returns {object} Returns an object
+ */
     validate(obj={}){
         try{
 
@@ -424,7 +595,7 @@ class CustomClassicModel{
         this.ok = {
             status:true,
             error:null,
-            data:obj
+            data:obj//new  version data is in json
         }
         return this.ok
     }
@@ -433,6 +604,11 @@ class CustomClassicModel{
     }
     }
 
+/**
+ * Extends the restriction schema model
+ * @param {object} ext_restr Extended restriction schema model
+ * 
+ */
     extend(ext_restr){
         try{
         for (const [key,value] of Object.entries(ext_restr)){
