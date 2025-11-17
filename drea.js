@@ -558,26 +558,15 @@ class CustomClassicModel{
 
                 })
 
-                if(!status){
-                    //if status is false
+            
                 this.error[key] = {
                     status:status,
                     error:error,
                     value:value
                 }
-        }}
+            }
 
-        if(Object.keys(this.error).length>0)
-            //number of keys in error is > 1
-            return this.error
-        
-        //else
-        this.ok = {
-            status:true,
-            error:null,
-            data:obj//new  version data is in json
-        }
-        return this.ok
+    return error
     }
     catch(error){
         throw(error)
