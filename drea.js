@@ -528,6 +528,8 @@ class CustomClassicModel{
  * @returns {object} Returns an object
  */
     validate(obj={}){
+        this.err = {}//cleaning obj
+        this.obj = {}//cleaning obj
         try{
 
             if(Object.keys(this.schema_restr_model).length === 0){
@@ -558,15 +560,24 @@ class CustomClassicModel{
 
                 })
 
-            
+            if(!status){
                 this.error[key] = {
                     status:status,
                     error:error,
                     value:value
                 }
+        } }
+            if (Object.Keys(this.error).length>0){
+                            return this.error
             }
-
-    return error
+            else{
+                this.ok={
+                    status:true,
+                    error:null,
+                    value:obj
+                }
+                return this.obj
+            }
     }
     catch(error){
         throw(error)
