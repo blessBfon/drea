@@ -1,3 +1,10 @@
+/*
+ * drea Validation Library
+ * Author: Fon Bless Mtoh
+ * Version: 1.0.0
+ * Description: Lightweight schema-based validation and normalization system for JavaScript and web applications.
+ * License: MIT
+ */
 
 /**
  * @param {Object} param0
@@ -8,18 +15,12 @@
 
 
 
-/*
- * drea Validation Library
- * Author: Fon Bless Mtoh
- * Version: 1.0.0
- * Description: Lightweight schema-based validation and normalization system for JavaScript and web applications.
- * License: MIT
- */
-
-
-
-
 //VERSION 1.1.8
+import {
+    CheckWithConstraints
+   } from './Utilities.js'
+
+
 
 /**
  * Special value representing "no-validation"
@@ -27,6 +28,8 @@
  * Use only as a rule in validation. This ensures validation  for that entry is skipped (hence true).
  * None is an immutable object and it carries a clear internal marker 
  */
+
+
 const None = Object.defineProperty(globalThis,"None",{
     value:Object.freeze({__type:"None"}),
     writable:false,
@@ -45,7 +48,59 @@ const StrictEmail = (v) =>
         const reg_ = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,63})+$/
         return reg_.test(v.trim)
     } 
-   
+
+
+/**
+ * verify the validity of a url 
+ */
+
+class URL {
+    //class variable
+    //match any uri or url regex
+     major_url_regex = /\b(?:[a-zA-Z][a-zA-Z0-9+.-]*):\/{2}?(?:[^\s\$.?#].[^\s]*)\b/
+    /*
+        (?:[a-zA-Z][a-zA-Z0-9+.-]*)--->scheme
+        :\/{2}?---> :(required) followed by //(optional ?)
+        (?:[^\s\$.?#].[^\s]*) --->domain (or ip) with port(optional) with path,query and fragment
+    */
+
+    //matches top url or uri regex
+     top_url_regex  //
+     top_uri_regex  //
+    //constructor
+    constructor(url){
+        //ensures uri is string only
+        if(typeof url !== 'string'){
+        throw ({
+            error_code:443,
+            error_name:'TypeError',
+            error_description:"URI must be a string"
+        })
+    }
+    this.url = url.toLowerCase()
+    }
+
+    //verify urlif its  valid
+    verifyPattern(extra_constraints={}){
+        //extra constraints not given
+        if ((Object.keys(extra_constraints).length<1)){
+            return this.major_url_regex.test(this.url)
+            //this will match probably any url or uri even fakes ones
+        }
+            if(this.major_url_regex.test(this.url)){//must be true
+            //lets send the extra constraints somewhere else
+            return CheckWithConstraints(this.url,extra_constraints)
+        
+        }
+
+        return false
+
+    }
+    
+}
+
+
+//strictier password regex 2 and 1 custom strictier password regex(dev specifies whats allowed and not allowed
 
 
 /** 
@@ -70,11 +125,13 @@ const validateEntry= ({
                         error:"Entry cannot be null"
                         }
     }
+
     //prevent illegal  use of None
     if (entry.__type === "None"){
         throw ({
-            code:447,
-            error:"entry cannot be of None type."
+            error_code:443,
+            error_name:"TypeError",
+            error_description:"entry cannot be of None type."
         })
     }
   
@@ -90,36 +147,48 @@ const validateEntry= ({
         if(errorMsg.__type ==="None"){
             
             throw ({
-            code:446,
-            error:"errorMsg cannot be of None type."
+            error_code:443,
+            error_name:"TypeError",
+            error_description:"errorMsg cannot be of None type."
         })
             
-        }
+    }
 
         //if rule is a regexp
         if (rule instanceof RegExp){
             isInputValid = rule.test(entry)
-        }
+    }
 
-        //if rule is function
+        //if rule is a boolean function
         else if (typeof rule === 'function'){
+            //ensuring is  booolean function
+            if(typeof rule(entry) === 'boolean'){//rule(entry) instanceof Boolean
             isInputValid = rule(entry)
-        }
+    }
+        else{
+            //this means its not a boolean function
+            throw({
+                error_code:443,
+                error_name:"TypeError",
+                error_description:`Rule should be a boolean function`
+            })
+    
+    }    }
         //{Update::>04/11/25}
         //if rule is None this means no validation will be done on that entry
         else if(rule.__type==='None'){
             isInputValid = true
             
-        }
+    }
 
         //if rule neither a function or a regexp
         else{
             isInputValid = false
-        }
+    }
 
 
 
-        //checks if input is not validated
+        //checks if input is not validated and stops any other validation
         if(isInputValid===false){
             return {
                 status:false,
@@ -137,11 +206,12 @@ const validateEntry= ({
 } 
         catch(error){
             throw error
-}
-}
+    }
+
+    }
 
 
-//Builtin functions
+
 
 /**
  * Checks if the entry matches the built-in username regex
@@ -151,7 +221,7 @@ const validateEntry= ({
 const isUsernameValid = (entry)=>{
      const RuleAndError = [
                  {
-                    rule:/^[A-Za-z]+$/,
+                    rule:/^[A-Za-z\s-]+$/,
                     errorMsg:"Username must contain only letters"
                 },
                 {
@@ -203,7 +273,7 @@ const  isEmailValid= (entry) =>{
 const isPhoneNumberValid = (entry) =>{
            const  RuleAndError=[
                 
-                   {
+                {
                     rule: /^[0-9]+$/,
                     errorMsg:"Phone number must contain only digits"
                 },
@@ -240,11 +310,15 @@ const isPasswordValid = (entry) =>{
                 errorMsg:"Password must contain atleast an uppercase letter"
             },
             {
+                rule:/[a-z]/,
+                errorMsg:"Password must contain atleast a lowercase letter"
+            },
+            {
                 rule:/[0-9]/,
                 errorMsg:"Password must contain atleast a number"
             },
             {
-                rule:/[?@!#$%&*]/,
+                rule:/[?@!#$%&*\s]/,
                 errorMsg:"Password must contain atleast a symbol"
             }
 
@@ -302,7 +376,11 @@ try{
         return InvalidArray
 }
     catch(error){
-        throw(error)
+        throw({
+            code:469,
+            error_name:error,
+            error_description:error.message
+        })
     }
 } 
 
@@ -421,6 +499,9 @@ class ClassicModel{
  * @returns {object} Returns an object
  */
         validate(){
+              //Always resetting error and ok obj on every validate calls
+        this.error={}//resetting errors
+        this.ok = {}//resetting ok obj
             try{
               
           for (const [key,value] of Object.entries(this.obj)){ 
@@ -447,11 +528,9 @@ class ClassicModel{
                         }
                 }
 
-            
-                
-          }
+            }
           
-          else{//if the field is null
+          else{
         
               //deleting the null field
                 delete this.obj[key]
@@ -509,16 +588,27 @@ class CustomClassicModel{
         ok  = {}
     constructor(schema_restr_model){
         
-        if(typeof schema_restr_model === "object")
+        //an array is instanceof an Object and also Array but an object false
+        //specific to an array
+        if(schema_restr_model instanceof  Array)
         {
-        this.schema_restr_model = schema_restr_model
-        }
-        else{
             throw ({
-                    code:469,
-                    Error:"Constructor must take an object"
+                    error_code:463,
+                    error_name:"IllegalArgument",
+                    error_description:"constructor must take an object"
                 })
         }
+        //checking now against all other types
+        if(typeof schema_restr_model !=="object"){
+            throw ({
+                    error_code:463,
+                    error_name:"IllegalArgument",
+                    error_description:"constructor must take an object"
+                })
+        }
+
+        //else now schema_restr_model is an object
+        this.schema_restr_model = schema_restr_model
     }
 
 
@@ -527,31 +617,34 @@ class CustomClassicModel{
  * @param {object} obj data to be structured by the schema restriction model
  * @returns {object} Returns an object
  */
-    validate(obj={}){
-        this.err = {}//cleaning obj
-        this.obj = {}//cleaning obj
+    validate(obj){
+        //Always resetting error and ok obj on every validate calls
+        this.error={}//resetting errors
+        this.ok = {}//resetting ok obj
+
         try{
+   
 
             if(Object.keys(this.schema_restr_model).length === 0){
-                return{
-                    code:470,
-                    error:"Schema restriction model cannot be empty"
-                }
+              throw new Error("schema restriction model cannot be empty")
+              //as they donot have an erro code or message
+                
         }
             if(Object.keys(obj).length ===0){
-                return{
-                    code:471,
-                    error:"Data object to be validated cannot be empty"
-                }
+              throw new Error("Data object to be validated cannot be empty")
+                
         }
 
             for(const [key,value] of Object.entries(obj)){
          
 
                 if (!this.schema_restr_model[key]) {
-                throw { code: 472, error: `Unknown key '${key}' not found in schema restrictions` };
-                        }
-
+                throw  ({
+                    error_code: 470,
+                    error_name: 'KeyExistenceError',
+                    error_description: `Unknown key '${key}' not found in schema restrictions`
+})
+}
 
              const {status,error} = validateEntry(
                 {
@@ -559,28 +652,38 @@ class CustomClassicModel{
                     RuleAndError:[this.schema_restr_model[key]]
 
                 })
-
-            if(!status){
+              
+               
+                    if(!status){//if input is not valid
                 this.error[key] = {
                     status:status,
                     error:error,
                     value:value
                 }
-        } }
-            if (Object.Keys(this.error).length>0){
+
+        }
+                
+            
+            }//end of for loop
+
+            //returning
+
+            if ((Object.keys(this.error)).length>0){//if there's any error found
                             return this.error
             }
-            else{
+
+            else{//if no error was found
                 this.ok={
                     status:true,
                     error:null,
                     value:obj
                 }
-                return this.obj
+                return this.ok
             }
+        
     }
     catch(error){
-        throw(error)
+       throw(error)
     }
     }
 
@@ -601,12 +704,15 @@ class CustomClassicModel{
 
                 }
             else{
-                throw ({ 
-                        code: 442, 
-                        error: `Duplicate key '${key}' already exists in schema`
-                     });
+                 throw({
+                    error_code: 442,
+                    error_name: 'DuplicateKeyError',
+                    error_descritpion: `Duplicate key '${key}' already exists in schema`
+                    })
+                    
             }
         }
+              
     }
 
 
@@ -615,9 +721,38 @@ class CustomClassicModel{
     }
 }
 
-    /* remove(key){
-        delete this.schema_restr_model[key]
-    } */
+//UPDATE 1.1.7
+    remove(Key){
+        /*
+        let keyPresent = Object.keys(this.schema_restr_model).forEach((key)=>{
+            return key === Key ? true : false
+        })
+            if(keyPresent === false)
+            //key not found
+        {
+            throw new Error(`'${Key}' not found`)
+        }
+        //if found
+        delete this.schema_restr_model[Key]
+        *///OR
+
+        const keys = Object.keys(this.schema_restr_model)//array
+
+        const keyPresent = keys.find((k)=>Key===k)
+
+        if (keyPresent===undefined)//key not found
+        {
+            throw({
+            error_code: 470,
+            error_name: 'KeyExistenceError',
+            error_description: `key name '${Key}' not found`
+            })
+        }
+        //if found
+        delete this.schema_restr_model[Key]
+        
+    } 
+    
 
     //swap schema restrictions
     swap(new_restr){
@@ -641,5 +776,5 @@ export  {
     Normalizer,
     validateMany,
     ClassicModel,
-    CustomClassicModel
+    CustomClassicModel,URL
 };

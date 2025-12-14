@@ -1,14 +1,18 @@
-
 // index.js
 export { 
-    isUsernameValid,
-    isEmailValid,
-    isPhoneNumberValid,
-    isPasswordValid,
-    isRequired,
-    validateEntry,
-    Normalizer,
-     ValidateMany,
-    ClassicModel,
-    CustomClassicModel
-} from './drea.js'
+      validateEntry,
+      isUsernameValid,
+      isEmailValid,
+      isPhoneNumberValid,
+      isPasswordValid,
+      isRequired,
+      Normalizer,
+      validateMany,
+      ClassicModel,
+      CustomClassicModel,
+      //Experimental
+      URL
+
+} from './drea.js';
+
+
