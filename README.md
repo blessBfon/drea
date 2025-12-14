@@ -33,7 +33,7 @@ OR
 ```js
  npm install drea@1.1.2
 ```
-which will install the latest version. `v1.1.2`
+which will install the latest version. `v1.1.3`
 
 ## Introduction
 
@@ -759,5 +759,6 @@ import { URL } from 'drea'
 ```js
 
 ```
+
 
 
