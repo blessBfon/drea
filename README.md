@@ -31,7 +31,7 @@ npm install drea
 OR
 
 ```js
- npm install drea@1.1.2
+ npm install drea@1.1.3
 ```
 which will install the latest version. `v1.1.3`
 
@@ -759,6 +759,7 @@ import { URL } from 'drea'
 ```js
 
 ```
+
 
 
 
