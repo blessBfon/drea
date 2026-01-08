@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { isPhoneNumberValid, isUsernameValid } from "./drea.js";
 import { ClassicModel, isPasswordValid, isRequired, validateEntry, validateMany,URL } from "./drea.js";
 
@@ -11,6 +12,14 @@ CustomClassicModel} from './drea.js'
 import {URL} from './drea.js'
 
 
+=======
+
+import {normalizer,
+    validateMany,
+    validateEntry,
+    ClassicModel,
+    CustomClassicModel} from './drea.js'
+>>>>>>> 430378da2165b2b0040abee842d645349254965f
 
 console.log(validateEntry({
     entry:'3434',
