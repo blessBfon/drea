@@ -226,7 +226,7 @@ const validateEntry= ({
 
     try{
  
-    if(entry == null || entry == undefined){ //prevent unexpected errors
+    if(entry === null || entry === undefined){ //prevent unexpected errors
         //null === undefined in JS
              throw new NullValueError({
                 error_code:"ERR_NULL_VALUE",
