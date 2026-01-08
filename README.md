@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Documentation
 # drea
 
@@ -1644,4 +1643,4 @@ import { URL } from 'drea'
 
 
 
->>>>>>> 430378da2165b2b0040abee842d645349254965f
+>>>>>>> 
