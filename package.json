@@ -1,0 +1,34 @@
+{
+  "name": "drea",
+  "version": "3.0.0",
+  "description": "A RuleForge validation system for JavaScript.",
+  "keywords": [
+    "validation",
+    "schema",
+    "forms",
+    "normalizer",
+    "schema composition"
+  ],
+  "homepage": "https://github.com/blessBfon/drea#readme",
+  "bugs": {
+    "url": "https://github.com/blessBfon/drea/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blessBfon/drea.git"
+  },
+  "license": "MIT",
+  "author": "Bless B",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "drea.js",
+    "Utilities.js",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
