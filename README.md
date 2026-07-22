@@ -1,4 +1,4 @@
-<div align="enter" style="display:flex; flex-direction:row;">
+<div align="center" >
 
 <img src="docs/public/img/drea-logo.png" alt="drea" width="500" height="500" />
 
