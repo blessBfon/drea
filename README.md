@@ -1,5 +1,7 @@
 <div align="enter" style="display:flex; flex-direction:row;">
 
+<img src="public/img/drea-logo.png" alt="drea" width="500" height="500" />
+
 # drea
 
 **Lightweight composition-based validation for JavaScript & TypeScript.**
@@ -9,7 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-included-3178C6?logo=typescript&logoColor=white)](#)
 [![license](https://img.shields.io/badge/license-MIT-green)](#)
 
-📖 **Full documentation → [full-docs](https://drea-docs.netlify.com)**
+📖 **Full documentation → [full-docs](https://drea-docs.netlify.app)**
 
 </div>
 
@@ -169,7 +171,7 @@ model.swap({ email: { rule: (v) => /@/.test(v), errorMsg: 'Invalid email' } })
 
 ---
 
-📖 **Full API reference, sandbox, and guides → [full-docs](https://drea-docs.netlify.com)**
+📖 **Full API reference, sandbox, and guides → [full-docs](https://drea-docs.netlify.app)**
 
 📋 **[Changelog](./CHANGELOG.md)**
 
