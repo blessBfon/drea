@@ -48,6 +48,5 @@ export default{
         socialLinks:[
             { icon:'gtihub', link:'https://github.com/blessBfon/drea' }
         ]
-    },
-    css:'./theme/custom.css'
+    }
 }
