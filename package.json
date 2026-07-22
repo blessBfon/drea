@@ -1,6 +1,6 @@
 {
   "name": "drea",
-  "version": "4.0.0",
+  "version": "4.0.3",
   "description": "A RuleForge validation system for JavaScript and Typescript.",
   "keywords": [
     "validation",
@@ -26,7 +26,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types:": "./dist/index.d.ts",
+      "types": "./dist/index.d.ts",
       "imports": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
@@ -50,11 +50,8 @@
   "devDependencies": {
     "typescript": "^6.0.3",
     "vite": "^7.3.6",
-    "vite-plugin-dts": "^5.0.3"
-  },
-  "sideEffects": false,
-  "dependencies": {
-    "drea": "file:drea-4.0.0.tgz",
+    "vite-plugin-dts": "^5.0.3",
     "vitepress": "^1.6.4"
-  }
+  },
+  "sideEffects": false
 }
