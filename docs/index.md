@@ -45,6 +45,6 @@
   - [`extend()` / `remove()` / `swap()`](/extend--remove--swap)
   - [`__File` — File Validation](/file-validation-in-nestvalidate)
 - [Error Reference](/error-reference)
-- [Changelog](/changelog)
+- [Changelog](/CHANGELOG)
 
 ---
