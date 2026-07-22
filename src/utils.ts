@@ -1,17 +1,25 @@
+//utils.js
 
-//version::: 1.1.8
-//Utility functions
-/*  */
-
-
-//import error instances
 import {
+    DreaAtomWrapper,
+    DreaFileWrapper,
+    ExtraConstraints,
+    MayDreaFileWrapper,
+    None,
+    PureObject,
+    RuleAndError_t
+} from './types.js'
+
+
+import{
     ArgumentTypeError,
-    MissingKeyError,
+    NullValueError,
     UnknownKeyError,
-    ValidationError,
-    NullValueError
-} from './drea.js'
+    MissingKeyError,
+    DuplicateKeyError,
+    ValidationError
+} from './errors.js'
+
 
 //strict email validation
 /**
@@ -19,7 +27,9 @@ import {
  * @param {*} v - The email addr to test
  * @returns {boolean} Returns true if email matches the regex
  */
-const StrictEmail = (v) =>
+//type of v here is any but will used explicitly as a string
+//This regex is more strict than the one used in the validateEmail function as it doesn't allow for some of the special characters that are allowed in the local part of the email address and it also ensures that the domain part of the email address is valid.
+const StrictEmail = (v:any):boolean =>
 
     {
         if(typeof v != 'string'){
@@ -38,14 +48,14 @@ const StrictEmail = (v) =>
 
 //Handling extra constrainst 
 //1 when protocol(s) is given
-const ALLOWED_KEYS = ["allowed_protocols",
+const ALLOWED_KEYS:Array<string> = ["allowed_protocols",
                         "allowed_ports",
                         "allowed_domains",
                         "contain_fragment",
                         "contain_path",
                         "contain_query",
                         "between"]
-const CheckWithConstraints = (url,xtra_constr)=>{
+const CheckWithConstraints = (url:string,xtra_constr:ExtraConstraints):boolean =>{
     
     let count = 0;//keeps a record of all successful condition passed by incrementing
     
@@ -193,27 +203,22 @@ const CheckWithConstraints = (url,xtra_constr)=>{
     return true
 }
 
+//Helpers 
 
-
-
-
-
-//Helpers
-
-export const checkPath = (url,ifPaths)=>{
-    const path = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/[^/?#]+(\/[^?#]*)?/)
+//Check Path [If path are allowed] ---> returns boolean
+export const checkPath = (url:string,ifPaths:boolean):boolean =>{
+      const path = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/[^/?#]+(\/[^?#]*)?/)
       
     if(!ifPaths){
-        const re = /[\/]{1,}[a-zA-Z-0-9]+[\/]{1,}/ /*should treat /////+ as / and should be followed by a string of characters to avoid treating http:// as having a path */
-        const re_ = /[\/]{1,}/ /*should treat /////+ as / */
-       return  path[1]===undefined || path[1]==='/' || re_.test(path[1])  || re.test(path[1])
-        }
-    return path[1]!==undefined && path[1]!=='/' 
+        const re = /[\/]{1,}[a-zA-Z-0-9]+[\/]{1,}/
+       return  path===null || path[1]===undefined || path[1]==='/'
+    }
+    return path ===null || path[1]!==undefined || path[1]!=='/' 
 }
 
 
-
-const checkDomain=(url,domains=[])=>{
+// Check domain [ if url domains matches any domain provided] ---> returns boolean
+const checkDomain=(url:string,domains:string[]):boolean=>{
         if(domains.length===0)
         {
             return true
@@ -223,22 +228,23 @@ const checkDomain=(url,domains=[])=>{
       
         //domain or ip addr
         const domain = url.match(/\b([a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}|\d{1,3}(?:\.\d{1,3}){3})\b/) 
-        return domains.includes(domain[1])?true:false
+        return domain===null || domains.includes(domain[1])?true:false
     
     }
 
 
-const checkLength=(url,range=[])=>{
+// Check Length enure url length is within the range ---> returns boolean
+const checkLength=(url:string,range:number[])=>{
     if(range[1]===undefined){
-        return url.length<range?true:false
+        return url.length<range[0]?true:false
     }
  
     return url.length>range[0]&&url.length<range[1]?true:false
 
 }
 
-
-const checkPort = (url,ports=[])=>{
+//Check Port [ if url port matches any of the port provided] ---> returns boolean
+const checkPort = (url:string,ports:string[]):boolean=>{
         const url_port = url.match(/:(\d+)(?=\/|$)/)
         if(url_port===null){
             return false//port must exists as an array of allowed ports were given 
@@ -252,40 +258,33 @@ const checkPort = (url,ports=[])=>{
 
 }
 
-
-
-const checkQuerys = (url,ifQuery)=>{
+//Check Query [ if query params are allowed] ---> returns boolean
+const checkQuerys = (url:string,ifQuery:boolean):boolean=>{
     const query = url.match(/\?([^#\s]+)/)
 
-    if(query===null){
-        return true
-    }
     if(!ifQuery){
         //it means no query is allowed
-        return query[1]?false:true
+        return query===null
     }
 
-   return true//ifQuery is true (query is allowed even if it wan't present)
+   return query!=null
 }
 
-
-
-
-
-const checkFragments = (url,ifFragments)=>{
+//Check Fragments [if fragments are allowed or not] ---> returns boolean
+const checkFragments = (url:string,ifFragments:boolean):boolean=>{
     const fragment = url.match(/#([^\s?#]+)/)
-    //so we check if the fragemnt is allowed or not
-    if (!ifFragments){
+ 
+   if (!ifFragments){
             //if fragements  exist it should return false as no fragment was supposed to exist
             return fragment===null
             
         }
     return fragment!=null
-   }
+}
 
 
-
-const checkProtocols = (url,protocols=[])=>{
+//Check Protocols [ url protocols must  match any of the provided protocols ]--> returns boolean
+const checkProtocols = (url:string,protocols:string[]):boolean =>{
         //lets break the url to get the scheme only 
         //we can split at : and get the first element or just check if the url matches  any protocol
         //we can just get index of the first : and slice it then.....
@@ -295,18 +294,19 @@ const checkProtocols = (url,protocols=[])=>{
 }
 
 //---------------------------------------------------------------------------
-const CheckForDuplicates = (arr)=>{
+const CheckForDuplicates = (arr:string[]):{state:boolean, duplicate:string | null}=>{
     if (Array.isArray(arr) && arr.every((el)=>typeof el==='string')){
         for(let i=0;i<arr.length;i++){
             let key = arr.splice(i,1)//start from index an remove just one key
-            if(arr.includes(key))//checkingf if that key is still present inside then must have been 2 of them
+            if(arr.includes(key[0]))
+                //checkingf if that key is still present inside then must have been 2 of them
                 return {
                     state:true,
-                    duplicate:key
+                    duplicate:key[0]
                 }
             //else
                 //put the key back but now at the ned of the array
-            arr.push(key)
+            arr.push(key[0])
         }
         return {
             state:false,
@@ -323,7 +323,7 @@ const CheckForDuplicates = (arr)=>{
 
 
 //A function to remove a key
-const removeK = (obj,key)=>{
+const removeK = (obj:{[key: string]: any},key:string)=>{
     delete obj[key]
 }
 
@@ -331,7 +331,7 @@ const removeK = (obj,key)=>{
 // an array of objects where each object has only 2 keys {rule and errorMsg}
 //Any errors thrown by CheckKeys will be caught by CheckForRuleAndError and rethrown to drea 
 // which will be caught again and rethrown to developer
-const CheckForRuleAndError = (restr_model)=>{
+const CheckForRuleAndError = (restr_model :any):{status:boolean, error:null | string}=>{
 
     try{
         // arrays in js are objects so if restr is an object it could be an array or an object 
@@ -373,7 +373,7 @@ const CheckForRuleAndError = (restr_model)=>{
 
                 return {
                     status:true,
-                    error:"null"
+                    error: null
                 }
             }
 
@@ -400,10 +400,9 @@ const CheckForRuleAndError = (restr_model)=>{
 }
 
 //A function to check if the objects present in an array contains onyl 2 keys rule and errorMsg
-export const CheckKeys = (obj)=>{
+const CheckKeys = (obj:RuleAndError_t):{status:boolean, error:null}=>{
 
-     let arr = Object.keys(obj)
-
+    let arr = Object.keys(obj)
             if(!arr.includes('rule')){
                 throw new MissingKeyError({
                         error_code:"ERR_MISSING_KEY",
@@ -419,12 +418,12 @@ export const CheckKeys = (obj)=>{
             }
 
             //lets see the additional keys the user might have placed in that normally doesn't belong
-             arr = arr.filter(v=>v!="rule" &&  v!="errorMsg")
+            arr = arr.filter(v=>v!=="rule" &&  v!=="errorMsg")
 
             if(arr.length===1){
                 throw new UnknownKeyError({
                     error_code:"ERR_UNKNOWN_KEY",
-                    error_description: `'${arr}' is an unknown RuleAndError[]  key`
+                    error_description:`'${arr}' is an unknown RuleAndError[]  key`
                 })
             }
 
@@ -441,10 +440,102 @@ export const CheckKeys = (obj)=>{
             }
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// hasNest 
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Returns `true` when `value` is a plain nested object that `nestvalidate`
+ * should recurse into, and `false` when it should be treated as an atomic leaf.
+ *
+ * Values that are treated as leaves (return `false`):
+ * - `null` or `undefined`
+ * - Arrays
+ * - Primitives (`string`, `number`, `boolean`)
+ * - drea-branded file wrappers (`DreaFileWrapper`) created by {@link __File}
+ *
+ * Values that are treated as nested objects (return `true`):
+ * - Plain objects `{}`
+ * - Class instances (guard at the schema level if atomic validation is needed)
+ *
+ * **`__File` exemption.**
+ *
+ * Because `typeof (new File(...)) === 'object'`, a raw `File` would be
+ * classified as a nested object and `nestvalidate` would try to recurse
+ * into its DOM properties (`name`, `size`, `type`, `lastModified`, …).
+ * Wrapping the file with `__File(file)` produces a `DreaFileWrapper`, and
+ * this method detects that brand first — before any object/array check —
+ * and returns `false`. The file is then validated as a single atomic value
+ * by the rule functions in the schema.
+ *
+ * @private
+ * @template T
+ * @param {T} value - The data field value to inspect.
+ * @returns {boolean}
+ *   `true` → recurse into `value` as a nested object.
+ *   `false` → validate `value` as a leaf entry.
+ *
+ * @example
+ * // Plain object → recurse
+ * this.hasNest({ name: 'Alice' })                         // true
+ *
+ * @example
+ * // Branded file wrapper → leaf (File validated atomically)
+ * this.hasNest(__File(new File([''], 'photo.png')))        // false ✅
+ *
+ * @example
+ * // Raw File (not wrapped) → recurse — use __File to prevent this
+ * this.hasNest(new File([''], 'photo.png'))                // true ⚠️
+ *
+ * @example
+ * // null → leaf
+ * this.hasNest(null)                                       // false
+ *
+ * @example
+ * // Array → leaf
+ * this.hasNest([1, 2, 3])                                  // false
+ */
+function hasNest<T>(value: T): boolean {
+    // If a drea wrapper — always treat as a leaf, never recurse the nest
+    if (typeof value === 'function' && ((value as any).__asDreaFile === true || 
+    (value as any).__asDreaAtom === true || 
+    (value as any).__asDreaMayFile === true)
+    ) return false
+   
+
+    return (
+        value !== null &&
+        value !== undefined &&
+        typeof value === 'object' &&
+        !Array.isArray(value)
+    )
+}
+
+
+
+//Checks if the value v is a File brand 
+const isDreaFile = (v:unknown): v is DreaFileWrapper => typeof v === 'function' && (v as any).__isDreaFile===true 
+
+//Check if the value v is an atom brand
+const isDreaAtom = (v:unknown): v is DreaAtomWrapper => typeof v === 'object' && (v as any).__isDreaAtom === true
+
+//Check if the value v is either a File brand or just null
+const isDreaMayFile = (v:unknown): v is MayDreaFileWrapper => v === null  || (v as any).__isDreaMayFile===true
+
+
+
+
+
 export{
-    CheckWithConstraints,   
-    StrictEmail,
+    CheckWithConstraints,
     CheckForDuplicates,
     removeK,
-    CheckForRuleAndError
-}
+    CheckForRuleAndError,
+    StrictEmail,
+    isDreaFile,
+    hasNest,
+    isDreaMayFile
+} 
+
+

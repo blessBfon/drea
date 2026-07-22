@@ -8,10 +8,15 @@ export {
       isRequired,
       Normalizer,
       validateMany,
-      ClassicModel,
       CustomClassicModel,
       URL,None
 
 } from './drea.js';
 
 
+export {
+      __File,
+      __Atomic
+} from './helpers.js'
+
+//[_written and tested by author_ jsdoc and guarded with claude]

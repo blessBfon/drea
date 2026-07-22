@@ -1,10 +1,11 @@
 {
   "name": "drea",
-  "version": "3.0.0",
-  "description": "A RuleForge validation system for JavaScript.",
+  "version": "4.0.0",
+  "description": "A RuleForge validation system for JavaScript and Typescript.",
   "keywords": [
     "validation",
     "schema",
+    "RuleForge",
     "forms",
     "normalizer",
     "schema composition"
@@ -18,17 +19,41 @@
     "url": "git+https://github.com/blessBfon/drea.git"
   },
   "license": "MIT",
-  "author": "Bless B",
+  "author": "Bless B.",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/index.cjs",
+  "module":"./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types:": "./dist/index.d.ts",
+      "imports": "./dist/index.js",
+      "require":"./dist/index.cjs"
+    }
+  },
   "files": [
-    "index.js",
+    "dist",
     "README.md",
-    "drea.js",
-    "Utilities.js",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
+    "build": "vite build",
+    "dev": "tsup src/index.ts --watch --dts --format esm",
+    "build:watch": "tsc -w",
+    "prepublishOnly": "npm run build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vite": "^7.3.6",
+    "vite-plugin-dts": "^5.0.3"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "drea": "file:drea-4.0.0.tgz"
   }
 }
