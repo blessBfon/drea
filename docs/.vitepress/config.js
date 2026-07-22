@@ -3,8 +3,8 @@ export default{
     title:"drea",
     description:"A RuleForge validation system for JavaScript and Typescript.",
     head:[
-        ['link',{ rel:'icon', href:'/favicon-4.ico'}],
-        ['link',{ rel:'shortcut icon', href:'/favicon-4.ico'}]
+        ['link',{ rel:'icon', href:'/favicon-5.ico'}],
+        ['link',{ rel:'shortcut icon', href:'/favicon-5.ico'}]
     ],
     themeConfig:{
         nav:[
