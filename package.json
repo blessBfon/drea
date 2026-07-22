@@ -22,13 +22,13 @@
   "author": "Bless B.",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module":"./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types:": "./dist/index.d.ts",
       "imports": "./dist/index.js",
-      "require":"./dist/index.cjs"
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
@@ -54,6 +54,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "drea": "file:drea-4.0.0.tgz"
+    "drea": "file:drea-4.0.0.tgz",
+    "vitepress": "^1.6.4"
   }
 }

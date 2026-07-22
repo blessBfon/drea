@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-included-3178C6?logo=typescript&logoColor=white)](#)
 [![license](https://img.shields.io/badge/license-MIT-green)](#)
 
-📖 **Full documentation → [dreav4.dev](https://dreav4.dev)**
+📖 **Full documentation → [full-docs](https://drea-docs.netlify.com)**
 
 </div>
 
@@ -169,7 +169,7 @@ model.swap({ email: { rule: (v) => /@/.test(v), errorMsg: 'Invalid email' } })
 
 ---
 
-📖 **Full API reference, sandbox, and guides → [dreav4.dev](https://dreav4.dev)**
+📖 **Full API reference, sandbox, and guides → [full-docs](https://drea-docs.netlify.com)**
 
 📋 **[Changelog](./CHANGELOG.md)**
 
