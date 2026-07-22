@@ -1,3 +1,6 @@
+import DefaultTheme from 'vitepress/theme'
+import './custom.css'
+
 export default{
     title:"drea",
     description:"A RuleForge validation system for JavaScript and Typescript.",

@@ -1,0 +1,15 @@
+.VPNavBarTitle .logo{
+    height: 56px !important;
+    width:auto !important;
+    margin-right:12px !important;
+}
+
+
+.VPSidebar .logo{
+    height:64px !important;
+    width:auto !important;
+}
+
+.VPNavBar{
+    height:72px !important;
+}
