@@ -1,5 +1,3 @@
-import DefaultTheme from 'vitepress/theme'
-import './custom.css'
 
 export default{
     title:"drea",
@@ -50,5 +48,6 @@ export default{
         socialLinks:[
             { icon:'gtihub', link:'https://github.com/blessBfon/drea' }
         ]
-    }
+    },
+    css:'./theme/custom.css'
 }
