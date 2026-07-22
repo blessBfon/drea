@@ -1,12 +1,17 @@
 export default{
     title:"drea",
     description:"A RuleForge validation system for JavaScript and Typescript.",
+    head:[
+        ['link',{ rel:'icon', href:'/favicon.ico'}]
+    ],
     themeConfig:{
         nav:[
             { text:'Home', link:'/'  },
             { text:'GitHub', link:'https://github.com/blessBfon/drea'},
             { text:'NPM', link:'https://www.npmjs.com/package/drea'}
         ],
+        logo:'/drea-logo.png',
+        siteTitle:'drea',
         sidebar:[
             {
                 text:'Documentation',

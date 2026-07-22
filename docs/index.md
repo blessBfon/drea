@@ -1,6 +1,6 @@
 <div align="center" >
 
-<img src="/drea-logo.png" alt="drea" width="500" height="500" />
+<img src="/docs/public/img/drea-logo.png" alt="drea" width="500" height="500" />
 
 # drea 
 
