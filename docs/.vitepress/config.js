@@ -3,7 +3,7 @@ export default{
     description:"A RuleForge validation system for JavaScript and Typescript.",
     head:[
         ['link',{ rel:'icon', href:'/favicon-2.ico'}],
-        ['link',{ rel:'shortcut icon', href:'/favicon-2.ico'}]
+        ['link',{ rel:'shortcut icon', href:'/favicon-3.ico'}]
     ],
     themeConfig:{
         nav:[
@@ -11,7 +11,7 @@ export default{
             { text:'GitHub', link:'https://github.com/blessBfon/drea'},
             { text:'NPM', link:'https://www.npmjs.com/package/drea'}
         ],
-        logo:'/img/drea-logo.png',
+        logo:'/img/drea-logo-3.png',
         siteTitle:'drea',
         sidebar:[
             {   
