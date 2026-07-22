@@ -11,7 +11,7 @@ export default{
             { text:'GitHub', link:'https://github.com/blessBfon/drea'},
             { text:'NPM', link:'https://www.npmjs.com/package/drea'}
         ],
-        logo:'/img/drea-logo-2.png',
+        logo:'/img/drea-logo.png',
         siteTitle:'drea',
         sidebar:[
             {   
