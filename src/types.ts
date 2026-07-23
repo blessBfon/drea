@@ -39,7 +39,7 @@ export type ValidateEntry_r = {
 //Shape of params of validateEntry [_p --> params]
 export interface ValidateEntry_p  {
     entry: string | number | object | any[] | boolean | null ;
-    RuleAndError: RuleAndError_t[]
+    RuleAndError: RuleAndError_t[] | MayDreaFileWrapper | DreaAtomWrapper | DreaFileWrapper
 }
 
 //Shape of return type for validateMany  [_r --> result]
@@ -69,7 +69,7 @@ export type ModelResultObj<T> = {
 
 //CustomClassicModel restr_schema shape 
 export interface SchemaRestriction {
-    [key: string]: SchemaRestriction |RuleAndError_t| RuleAndError_t[]  // index signature for string keys
+    [key: string]: SchemaRestriction |RuleAndError_t| RuleAndError_t[] |MayDreaFileWrapper|DreaFileWrapper// index signature for string keys
 }
 
 
@@ -101,7 +101,7 @@ export type PureObject = object_p<Record<string,ValidateEntry_p['entry']>>
  * // Inside a rule, the unwrapped File is passed automatically:
  * // rule: (v: File) => v.size < 5 * 1024 * 1024
  */
-export type DreaFileWrapper = (() => File) & { readonly __isDreaFile: true }
+export type DreaFileWrapper = {():RuleAndError_t[],readonly __isDreaFile: true }
 
 /**
  * The opaque wrapper type returned by {@link __mayFile}.
@@ -120,7 +120,9 @@ export type DreaFileWrapper = (() => File) & { readonly __isDreaFile: true }
  * // Inside a rule, the unwrapped File is passed automatically:
  * // rule: (v: File) => v.size < 5 * 1024 * 1024
  */
-export type MayDreaFileWrapper = (() => File | null) & { readonly __isDreaMayFile: true }
+export type MayDreaFileWrapper = {
+    ():  RuleAndError_t[],
+    readonly __isDreaMayFile: true }
 
 //Similar to DreaFileWrapper but returns File or null
-export type DreaAtomWrapper = (() => PureObject) & { readonly __isDreaAtom: true }
+export type DreaAtomWrapper = {(): PureObject,  readonly __isDreaAtom: true }

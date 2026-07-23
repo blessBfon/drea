@@ -3,7 +3,7 @@ import{
     NullValueError,
     MissingKeyError,
 } from './errors.js'
-import { None, PureObject } from './types.js'
+import { DreaFileWrapper, MayDreaFileWrapper, None, PureObject, RuleAndError_t } from './types.js'
 // ═════════════════════════════════════════════════════════════════════════════
 //
 //  GUARD FUNCTIONS
@@ -539,6 +539,43 @@ function AssertRuleAndErrorArray(arr: unknown): void {
     })
 }
 
+
+function AssertRuleAndError(obj: RuleAndError_t): void {
+    if (obj === null || obj=== undefined) {
+            throw new NullValueError({
+                error_code: 'ERR_NULL_VALUE',
+                error_description: `Expected a RuleAndError object, got ${obj=== null ? 'null' : 'undefined'}`
+            })
+        }
+        if (Array.isArray(obj) || typeof obj!== 'object') {
+            throw new ArgumentTypeError({
+                error_code: 'ERR_INVALID_ARGTYPE',
+                error_description: `Expected a RuleAndError object, got ${typeLabel(obj)}`
+            })
+        }
+        
+        if (!('rule' in obj)) {
+            throw new MissingKeyError({
+                error_code: 'ERR_MISSING_KEY',
+                error_description: `Missing 'rule' property in RuleAndError object`
+            })
+        }
+        if (!('errorMsg' in obj)) {
+            throw new MissingKeyError({
+                error_code: 'ERR_MISSING_KEY',
+                error_description: `Missing 'errorMsg' property in RuleAndError object`
+            })
+        }
+
+          if(Object.keys(obj).length>2){
+              throw new ArgumentTypeError({
+                error_code:"ERR_INVALID_ARGTYPE",
+                error_description:`Expected 2 arguments <rule> and <errorMsg> in RuleAndError object, got ${Object.keys(obj).length}}`
+            })
+          }
+}
+
+
 const  AssertEntryInput = (entry:unknown)=>{
     if(entry===None){
         throw new ArgumentTypeError({
@@ -590,15 +627,14 @@ const  AssertEntryInput = (entry:unknown)=>{
 function AssertValidateEntryInput(input: unknown): void {
     AssertPlainObject(input, 'validateEntry input')
 
-    const obj = input as Record<string, unknown>
 
-    if (!('entry' in obj)) {
+    if (!('entry' in input)) {
         throw new MissingKeyError({
             error_code: 'ERR_MISSING_KEY',
             error_description: "Missing 'entry' property in validateEntry input object"
         })
     }
-    if (!('RuleAndError' in obj)) {
+    if (!('RuleAndError' in input)) {
         throw new MissingKeyError({
             error_code: 'ERR_MISSING_KEY',
             error_description: "Missing 'RuleAndError' property in validateEntry input object"
@@ -612,7 +648,8 @@ function AssertValidateEntryInput(input: unknown): void {
         })
     }
     AssertEntryInput(input.entry)
-    AssertRuleAndErrorArray(obj.RuleAndError)
+    AssertRuleAndErrorArray(typeof input.RuleAndError==='function'?
+        (input.RuleAndError)():input.RuleAndError)
 }
 
 
@@ -844,5 +881,6 @@ export{
     AssertValidateManyInput,
     AssertStringOrNumber,
     AssertDreaFile,
-    AssertMayDreaFile
+    AssertMayDreaFile,
+    AssertRuleAndError
 }

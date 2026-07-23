@@ -1,4 +1,4 @@
-import { PureObject } from './types.js';
+import { PureObject, RuleAndError_t } from './types.js';
 /**
  * Asserts that `obj` is a plain JavaScript object.
  *
@@ -289,6 +289,7 @@ declare function AssertRule(rule: unknown, index: number): void;
  * //   message: "Missing 'rule' property at RuleAndError[0]" }
  */
 declare function AssertRuleAndErrorArray(arr: unknown): void;
+declare function AssertRuleAndError(obj: RuleAndError_t): void;
 /**
  * Asserts that the argument passed to `validateEntry()` is fully well-formed.
  *
@@ -464,5 +465,5 @@ declare function AssertStringOrNumber(value: unknown, paramName?: string): asser
  */
 declare function AssertDreaFile(v: unknown, paramName?: string): asserts v is File;
 declare function AssertMayDreaFile(v: unknown, paramName?: string): asserts v is File | null;
-export { AssertPlainObject, AssertOptionalPlainObject, AssertString, AssertNonEmptyString, AssertArray, AssertRule, AssertRuleAndErrorArray, AssertValidateEntryInput, AssertValidateManyInput, AssertStringOrNumber, AssertDreaFile, AssertMayDreaFile };
+export { AssertPlainObject, AssertOptionalPlainObject, AssertString, AssertNonEmptyString, AssertArray, AssertRule, AssertRuleAndErrorArray, AssertValidateEntryInput, AssertValidateManyInput, AssertStringOrNumber, AssertDreaFile, AssertMayDreaFile, AssertRuleAndError };
 //# sourceMappingURL=guard.d.ts.map

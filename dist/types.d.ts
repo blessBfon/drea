@@ -25,7 +25,7 @@ export type ValidateEntry_r = {
 };
 export interface ValidateEntry_p {
     entry: string | number | object | any[] | boolean | null;
-    RuleAndError: RuleAndError_t[];
+    RuleAndError: RuleAndError_t[] | MayDreaFileWrapper | DreaAtomWrapper | DreaFileWrapper;
 }
 export type ValidateMany_r = {
     value: ValidateEntry_p['entry'];
@@ -45,7 +45,7 @@ export type ModelResultObj<T> = {
     data: T | null;
 };
 export interface SchemaRestriction {
-    [key: string]: SchemaRestriction | RuleAndError_t | RuleAndError_t[];
+    [key: string]: SchemaRestriction | RuleAndError_t | RuleAndError_t[] | MayDreaFileWrapper | DreaFileWrapper;
 }
 export type object_p<T> = T extends object ? T extends Function ? never : T extends readonly any[] ? never : T extends Date | Map<any, any> | Set<any> ? never : T : never;
 export type PureObject = object_p<Record<string, ValidateEntry_p['entry']>>;
@@ -66,7 +66,8 @@ export type PureObject = object_p<Record<string, ValidateEntry_p['entry']>>;
  * // Inside a rule, the unwrapped File is passed automatically:
  * // rule: (v: File) => v.size < 5 * 1024 * 1024
  */
-export type DreaFileWrapper = (() => File) & {
+export type DreaFileWrapper = {
+    (): RuleAndError_t[];
     readonly __isDreaFile: true;
 };
 /**
@@ -86,10 +87,12 @@ export type DreaFileWrapper = (() => File) & {
  * // Inside a rule, the unwrapped File is passed automatically:
  * // rule: (v: File) => v.size < 5 * 1024 * 1024
  */
-export type MayDreaFileWrapper = (() => File | null) & {
+export type MayDreaFileWrapper = {
+    (): RuleAndError_t[];
     readonly __isDreaMayFile: true;
 };
-export type DreaAtomWrapper = (() => PureObject) & {
+export type DreaAtomWrapper = {
+    (): PureObject;
     readonly __isDreaAtom: true;
 };
 //# sourceMappingURL=types.d.ts.map

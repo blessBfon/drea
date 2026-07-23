@@ -182,3 +182,17 @@ export class NullValueError extends Error {
         }
     }
 }
+
+
+export class InvalidWrapperError extends Error {
+    code: string
+    constructor(err: Err) {
+        super(err.error_description)
+        this.name = 'InvalidWrapperError'
+        this.code = err.error_code
+        Object.setPrototypeOf(this, new.target.prototype)
+        if (typeof (Error as any).captureStackTrace === 'function') {
+            (Error as any).captureStackTrace(this, this.constructor)
+        }
+    }
+}

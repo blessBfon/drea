@@ -16,7 +16,8 @@ export {
 
 export {
       __File,
-      __Atomic
+      __Atomic,
+      __mayFile,
 } from './helpers.js'
 
 //[_written and tested by author_ jsdoc and guarded with claude]

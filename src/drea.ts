@@ -43,7 +43,8 @@ import {
     CheckForRuleAndError,
     StrictEmail,
     isDreaFile,
-    hasNest
+    hasNest,
+    isDreaMayFile
 } from './utils.js'
 
 import{
@@ -56,7 +57,8 @@ import{
     AssertRuleAndErrorArray,
     AssertValidateEntryInput,
     AssertValidateManyInput,
-    AssertStringOrNumber
+    AssertStringOrNumber,
+    AssertDreaFile
 } from './guard.js'
 
 import{
@@ -317,17 +319,28 @@ const validateEntry = ({ entry, RuleAndError = [] }: ValidateEntry_p): ValidateE
             entry = entry()
         }
 
-                //If the entry is passed as a function 
-        if(typeof entry === 'function'){
+        //When Rule and Error is passed with a function wrapped around it
+        if(typeof RuleAndError === 'function'){
            // An argument to __File or __mayFile wrapper then it will be extracted
-            if( (entry as DreaFileWrapper).__isDreaFile || 
-             (entry as MayDreaFileWrapper).__isDreaMayFile  ){
-                entry = entry()
+            if( (RuleAndError as MayDreaFileWrapper).__isDreaMayFile  ){
+                RuleAndError =  RuleAndError() as RuleAndError_t[]
+            }
+             else if( (RuleAndError as DreaFileWrapper).__isDreaFile  ){
+                RuleAndError =  RuleAndError() as RuleAndError_t[]
+                //Expect the entry value to not be null (thats must be a file)
+                AssertDreaFile(entry)
+
+            }
+            else{
+                throw new ValidationError({
+                    error_code:"ERR_VALIDATION",
+                    error_description:`Unexpected function wrapped around RuleAndError: ${RuleAndError}`
+                })
             }
         }  //[Would be simplified later]
+        
 
-
-        for (const { rule, errorMsg } of RuleAndError) {
+        for (const { rule, errorMsg } of RuleAndError as RuleAndError_t[]) {
             let isInputValid = false
 
             if (rule instanceof RegExp) {
@@ -967,7 +980,7 @@ class CustomClassicModel {
                     error_description: 'Missing schema restriction model'
                 })
             }
-
+            //Need to reverse this loop
             for (const [key, value] of Object.entries(obj)) {
                 if (
                     this.schema_restr_model[key] === undefined ||
@@ -988,7 +1001,21 @@ class CustomClassicModel {
                 that you create a giant model but the dataobj can fit a portion of it 
                  */
                 if (!hasNest(value)) {
+
+                    //Because it may occur value is null but user used __MayFile or File()
+                     if(isDreaFile(this.schema_restr_model[key]) || isDreaMayFile(this.schema_restr_model[key])){
+                        if(isDreaMayFile(this.schema_restr_model[key])){
+                            this.schema_restr_model[key] = this.schema_restr_model[key]()
+                        }
+                        else{
+                            throw new NullValueError({
+                                error_code:"ERR_NULL_VALUE",
+                                error_description:"Used __File wrapper expected File instance as value, got null or undefined"
+                            })
+                        }
+                     }
                     if (CheckForRuleAndError(this.schema_restr_model[key]).status) {
+                        
                         const { status, error } = validateEntry({
                             entry: value,
                             RuleAndError: Array.isArray(this.schema_restr_model[key])
@@ -1001,7 +1028,22 @@ class CustomClassicModel {
                         }
                     }
                 } 
-                else {
+                else {     
+                    //Suppose its file nest schema
+                    if(isDreaFile(this.schema_restr_model[key]) || isDreaMayFile(this.schema_restr_model[key])){
+                        
+                        if (CheckForRuleAndError(this.schema_restr_model[key]()).status) {
+                            const { status, error } = validateEntry({
+                                entry: value,
+                                RuleAndError: this.schema_restr_model[key]
+                            })
+
+                            if (!status) {
+                                this.error[key] = { status, error, value }
+                            }
+                        }
+                        continue
+                    }
                     const nestV = (new CustomClassicModel(this.schema_restr_model[key] as SchemaRestriction))
                                                                     .nestvalidate(value as PureObject)
                     if (nestV.error) {
@@ -1116,6 +1158,13 @@ class CustomClassicModel {
                     })
                 }
 
+                //For now we are going to disallowed the user of file wrappers in validate() as its of no need and create its assert guard later
+                if(isDreaFile(this.schema_restr_model[key]) || isDreaMayFile(this.schema_restr_model[key])){
+                    throw new ArgumentTypeError({
+                        error_code:"ERR_INVALID_ARGTYPE",
+                        error_description:`drea file wrappers should not be used when using validate()`
+                    })
+                }
                 if (CheckForRuleAndError(this.schema_restr_model[key]).status) {
                     const { status, error } = validateEntry({
                         entry: value,

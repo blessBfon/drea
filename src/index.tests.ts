@@ -1,3 +1,4 @@
+import { ArgumentTypeError } from './errors.js'
 import { 
   isUsernameValid, 
   isEmailValid, 
@@ -7,6 +8,7 @@ import {
   CustomClassicModel,Normalizer,
   validateEntry,
   __File,
+  __mayFile,
 } from './index.js'
 
 /* 
@@ -199,8 +201,8 @@ test("Testing validateEntry using None as rule",()=>{
 
 test("Testing validateEntry on a file using __File",()=>{
   expect(validateEntry({
-    entry:__File(new File(["Content A fileBits where the size is also calculated"],"name.txt",
-      {type:"application/txt"})),
+    entry:new File(["Content A fileBits where the size is also calculated"],"name.txt",
+      {type:"application/txt"}),
     RuleAndError:[{
       rule:(v)=>v.type==='text/plain',errorMsg:"Must be a txt file"
     }]
@@ -222,18 +224,20 @@ const data_without_nest= {
 const schema = {
   id:{rule:None,errorMsg:null},
   name:{ rule:/[A-Za-z/s]+/, errorMsg:"name must contain only letters"},
-  file:[
-    {rule:None,errorMsg:null},//No rule, No validation , No errorMsg needed
+  file:__mayFile([
+    {rule:(v)=>v!=null,errorMsg:'File is required'},
     { rule:(v:unknown)=>(v as any).type==='application/pdf',errorMsg:"only pdf is allowed"},
     { rule:(v:unknown)=>(v as any).name==='Resume.pdf',errorMsg:"file must be called `Resume` "},
     { rule:(v:unknown)=>(new Date('2026-07-28').getTime())>(v as any).lastModified, errorMsg:`file modified after due date`}
-  ]
+  ])
 }
 
 const ccl = new CustomClassicModel(schema)
 
 test("Testing ccl with validate()",()=>{
-  expect(ccl.validate(data_without_nest)).toEqual({status:true,error:null,data:data_without_nest})
+  expect(()=>ccl.validate(data_without_nest)).toThrow(new ArgumentTypeError({
+    error_code:"ERR_INVALID_ARGTYPE",error_description:"drea file wrappers should not be used when using validate()"
+  }))
 })
 
 
@@ -243,10 +247,7 @@ test("Testing ccl with validate()",()=>{
 const data_with_nest = {
   id:'N2oE*****',
   name:"Alice",
-  file:__File(new File(["Content"],"Resume.pdf",{
-    type:"application/pdf",
-    lastModified:(new Date('2026-07-19')).getTime()
-  })),
+  file:null,
   profile:{
     about:"hi, am alice....",
     address:"7421 Maple Grove Lane",
@@ -277,6 +278,12 @@ ccl.extend({
 })// We've extended the schema by adding a nested obj in it
 
 test("Testing ccl on nestvalidate()",()=>{
-  expect(ccl.nestvalidate(data_with_nest)).toEqual({status:true,error:null,data:data_with_nest})
+  expect(ccl.nestvalidate(data_with_nest)).toEqual({status:false,error:{
+    file:{
+          error: "File is required",
+          status: false,
+          value: null,
+        }
+      },data:null}) //We expect n error on this field
 })
 

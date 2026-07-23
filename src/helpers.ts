@@ -2,10 +2,12 @@
 import {
     AssertDreaFile,
     AssertMayDreaFile,
-    AssertPlainObject
+    AssertPlainObject,
+    AssertRuleAndError,
+    AssertRuleAndErrorArray
 } from './guard.js'
 
-import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject } from './types.js'
+import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject, RuleAndError_t } from './types.js'
 
 /**
  * Wraps a `File` instance so that `nestvalidate` treats it as a single
@@ -84,12 +86,16 @@ import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject } from
  * // { code: 'ERR_NULL_VALUE',
  * //   message: "Expected File instance for 'v', got null or undefined" }
  */
-export const __File = (v:File):DreaFileWrapper =>{
-
+export const __File = (v:RuleAndError_t | RuleAndError_t[]) =>{
     // GUARD //
-    AssertDreaFile(v)
+   if (Array.isArray(v)){
+        AssertRuleAndErrorArray(v)
+   }
+   else{
+        AssertRuleAndError(v)
+   }
 
-    const fn =(() => v) as DreaFileWrapper // Unwrap 
+    const fn =(() =>Array.isArray(v)?v:[v]) as DreaFileWrapper // Unwrap 
 
     Object.defineProperty(fn,'__isDreaFile',{
         value:true,
@@ -175,19 +181,24 @@ export const __File = (v:File):DreaFileWrapper =>{
  * // error_description: `Expected File instance or null for '${paramName}', got ${typeLabel(v)}`}
  *
  */
-export const __mayFile = (v:File|null):MayDreaFileWrapper =>{
+export const __mayFile = (v:RuleAndError_t | RuleAndError_t[]) =>{
     // GUARD //
-    AssertMayDreaFile(v)
+   if (Array.isArray(v)){
+        AssertRuleAndErrorArray(v)
+   }
+   else{
+        AssertRuleAndError(v)
+   }
 
-    const fn = (() => v) as MayDreaFileWrapper
+    const fn = (() => Array.isArray(v)?v:[v]) 
     Object.defineProperty(fn,'__isDreaMayFile',{
         value:true,
         writable:false,
         enumerable:false,
         configurable:false
     })
-
-    return Object.freeze(fn)
+    
+    return Object.freeze(fn as MayDreaFileWrapper) 
 }
 
 

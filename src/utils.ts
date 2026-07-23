@@ -13,11 +13,11 @@ import {
 
 import{
     ArgumentTypeError,
-    NullValueError,
+    NullValueError,InvalidWrapperError,
     UnknownKeyError,
     MissingKeyError,
     DuplicateKeyError,
-    ValidationError
+    ValidationError,
 } from './errors.js'
 
 
@@ -339,7 +339,6 @@ const CheckForRuleAndError = (restr_model :any):{status:boolean, error:null | st
             
             //lets specified now if its object 
             if(!Array.isArray(restr_model)){
-
                 const {status,error} = CheckKeys(restr_model)
                     return {
                             status:status,
@@ -515,14 +514,28 @@ function hasNest<T>(value: T): boolean {
 
 
 //Checks if the value v is a File brand 
-const isDreaFile = (v:unknown): v is DreaFileWrapper => typeof v === 'function' && (v as any).__isDreaFile===true 
-
+const isDreaFile = (v:unknown): v is DreaFileWrapper =>{
+   if(typeof v ==='function'){
+        return (Array.isArray((v as DreaFileWrapper)()))&& (v as any).__isDreaFile===true
+   }
+   else{
+        return false
+   }
+}
 //Check if the value v is an atom brand
-const isDreaAtom = (v:unknown): v is DreaAtomWrapper => typeof v === 'object' && (v as any).__isDreaAtom === true
+const isDreaAtom = (v:unknown): v is DreaAtomWrapper => typeof v ==='object' && (v as any).__isDreaAtom === true
 
 //Check if the value v is either a File brand or just null
-const isDreaMayFile = (v:unknown): v is MayDreaFileWrapper => v === null  || (v as any).__isDreaMayFile===true
-
+const isDreaMayFile = (v:unknown): v is MayDreaFileWrapper=>{
+   
+   if(typeof v ==='function'){
+     
+        return (Array.isArray((v as MayDreaFileWrapper)()))&& (v as any).__isDreaMayFile===true
+   }
+   else{
+        return false
+   }
+}
 
 
 

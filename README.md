@@ -6,7 +6,7 @@
 
 **Lightweight composition-based validation for JavaScript & TypeScript.**
 
-[![npm](https://img.shields.io/badge/npm-drea%404.0.0-blue)](https://www.npmjs.com/package/drea)
+[![npm](https://img.shields.io/badge/npm-drea%404.0.3-blue)](https://www.npmjs.com/package/drea)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-included-3178C6?logo=typescript&logoColor=white)](#)
 [![license](https://img.shields.io/badge/license-MIT-green)](#)
@@ -111,21 +111,21 @@ model.nestvalidate({ user: { name: 'Al', age: 20 } })
 
 ## File Validation (nestvalidate)
 
-Use `__File()` to validate a `File` object as a single value inside `nestvalidate`. Without wrapping, drea would try to recurse into the File's properties.
+Use `__File()` to validate a `File` object as a single value inside `nestvalidate`. Without wrapping using `__File()`, drea would try to recurse into the File's properties.
 
 ```ts
 import { __File, CustomClassicModel } from 'drea'
 
 const schema = {
-  avatar: [
+  avatar: __File([
     { rule: (v) => v instanceof File || v === null,                                  errorMsg: 'Must be a file' },
     { rule: (v) => v === null || ['image/jpeg', 'image/png'].includes(v.type),       errorMsg: 'JPG or PNG only' },
     { rule: (v) => v === null || v.size <= 6 * 1024 * 1024,                         errorMsg: 'Max 6 MB' }
-  ]
+  ])
 }
 
 const model = new CustomClassicModel(schema)
-model.nestvalidate({ avatar: __File(fileFromInput) })
+model.nestvalidate({ avatar: fileFromInput })
 ```
 
 > `validate()` does not recurse into nested objects — pass raw `File` directly, no `__File` needed.

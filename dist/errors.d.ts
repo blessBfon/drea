@@ -123,4 +123,8 @@ export declare class NullValueError extends Error {
     code: string;
     constructor(err: Err);
 }
+export declare class InvalidWrapperError extends Error {
+    code: string;
+    constructor(err: Err);
+}
 //# sourceMappingURL=errors.d.ts.map

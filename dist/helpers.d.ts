@@ -1,4 +1,4 @@
-import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject } from './types.js';
+import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject, RuleAndError_t } from './types.js';
 /**
  * Wraps a `File` instance so that `nestvalidate` treats it as a single
  * atomic value rather than recursing into its object properties.
@@ -76,7 +76,7 @@ import { DreaAtomWrapper, DreaFileWrapper, MayDreaFileWrapper, PureObject } from
  * // { code: 'ERR_NULL_VALUE',
  * //   message: "Expected File instance for 'v', got null or undefined" }
  */
-export declare const __File: (v: File) => DreaFileWrapper;
+export declare const __File: (v: RuleAndError_t | RuleAndError_t[]) => DreaFileWrapper;
 /**
  * Wraps a `File` instance if not null so that `nestvalidate` treats it as a single
  * atomic value rather than recursing into its object properties.
@@ -150,6 +150,6 @@ export declare const __File: (v: File) => DreaFileWrapper;
  * // error_description: `Expected File instance or null for '${paramName}', got ${typeLabel(v)}`}
  *
  */
-export declare const __mayFile: (v: File | null) => MayDreaFileWrapper;
+export declare const __mayFile: (v: RuleAndError_t | RuleAndError_t[]) => MayDreaFileWrapper;
 export declare function __Atomic(v: PureObject): DreaAtomWrapper;
 //# sourceMappingURL=helpers.d.ts.map
