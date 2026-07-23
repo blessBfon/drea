@@ -4,6 +4,10 @@ All notable changes to **drea** are documented here.
 Full documentation → [dreav4.dev](https://dreav4.dev) *(replace with your deployed URL)*
 
 ---
+## [4.1.0] - Wrapper functions 
+
+### 🚨 Breaking Changes
+- Wrapper functions `__File()` and `__mayFile()` are not allowed to wrap the data object anymore, they should use on the schema to wrap the RuleAndError of the field whose mirror on the data object is either a file or null
 
 ## [4.0.0] – TypeScript Support, File Validation & Full Guard System
 

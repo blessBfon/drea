@@ -1,6 +1,6 @@
 {
   "name": "drea",
-  "version": "4.0.4",
+  "version": "4.1.0",
   "description": "A RuleForge validation system for JavaScript and Typescript.",
   "keywords": [
     "validation",
