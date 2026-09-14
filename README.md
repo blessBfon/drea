@@ -26,7 +26,7 @@ npm install drea
 
 or
 
-npm install drea@4.0.3
+npm install drea@4.1.2
 ```
 
 ## Quick Start
